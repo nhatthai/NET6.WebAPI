@@ -47,8 +47,9 @@ jobs:
   
   deploy_aks:
     needs: build
-    steps:
+    runs-on: self-hosted
 
+    steps:
     # Set the target Azure Kubernetes Service (AKS) cluster. 
     - uses: azure/aks-set-context@v1
       with:
