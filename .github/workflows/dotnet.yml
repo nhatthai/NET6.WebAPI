@@ -10,7 +10,7 @@ env:
   REGISTRY_NAME: learndeployments
   CLUSTER_RESOURCE_GROUP: LearnGithubAction
   APP_NAME: dotnet6web
-  CLUSTER_NAME: {cluster-name}
+  CLUSTER_NAME: 'learngithub'
   NAMESPACE: learn-github
   SECRET: 'learnsecret'
 
@@ -75,8 +75,8 @@ jobs:
     - uses: azure/k8s-deploy@v1
       with:
         manifests: |
-          ${{ github.workspace }}/manifests/deployment.yaml
-          ${{ github.workspace }}/manifests/service.yaml
+          ${{ github.workspace }}/manifests/webapi.yaml
+          ${{ github.workspace }}/manifests/ingress-aks.yaml
         images: |
           ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
         imagepullsecrets: |
