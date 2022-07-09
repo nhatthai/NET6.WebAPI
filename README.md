@@ -1,7 +1,7 @@
 # NET6.WebAPI
 .NET6 WebAPI sample using Github Actions for deployments to Azure Kubernetes Service
 
-### Requirements
+### Github Runner Requirements 
 + Install Docker & DockerCompose
 + Minikube or Kubernetes cluster (see below if needed)
 + Install azure cli
@@ -20,24 +20,30 @@ az login
 
 + Create group in Azure
 ```
-az group create --name LearnGithubAction --location SoutheastAsia
+az group create --name LearningDeployment --location SoutheastAsia
+```
+
++ Create AKS Cluster
+```
+az aks create --resource-group LearningDeployment --name AKSLearningGithubActions --node-count 2 --generate-ssh-keys
+
 ```
 
 + Create ACR
 ```
-az acr create --resource-group LearnGithubAction --name learndeployments --sku Basic
+az acr create --resource-group LearningDeployment --name learndeploymentgithub --sku Basic
 ```
 
 Required: docker start on your machine
 ```
-az acr login --name learndeployments
+az acr login --name learndeploymentgithub
 ```
 
 ```
-az ad sp create-for-rbac --name "dotnet6web" --role contributor --scopes /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP> --sdk-auth
+az ad sp create-for-rbac --name "net6web" --role contributor --scopes /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP> --sdk-auth
 
 ```
-Copy and paste into the github repository 
+Copy and paste into secret AZURE_CREDENTTIAL in the github repository 
 
 
 + [Create container registry](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-service-principal)
@@ -48,8 +54,8 @@ Copy and paste into the github repository
 # Modify for your environment.
 # ACR_NAME: The name of your Azure Container Registry
 # SERVICE_PRINCIPAL_NAME: Must be unique within your AD tenant
-ACR_NAME=learndeployments
-SERVICE_PRINCIPAL_NAME=PrincipalLearnGithubActions
+ACR_NAME=learndeploymentgithub
+SERVICE_PRINCIPAL_NAME=PrincipalLearnDeploymentGithubActions
 
 # Obtain the full registry ID
 ACR_REGISTRY_ID=$(az acr show --name $ACR_NAME --query "id" --output tsv)
@@ -61,7 +67,7 @@ ACR_REGISTRY_ID=$(az acr show --name $ACR_NAME --query "id" --output tsv)
 # acrpull:     pull only
 # acrpush:     push and pull
 # owner:       push, pull, and assign roles
-PASSWORD=$(az ad sp create-for-rbac --name $SERVICE_PRINCIPAL_NAME --scopes $ACR_REGISTRY_ID --role acrpull --query "password" --output tsv)
+PASSWORD=$(az ad sp create-for-rbac --name $SERVICE_PRINCIPAL_NAME --scopes $ACR_REGISTRY_ID --role acrpush --query "password" --output tsv)
 USER_NAME=$(az ad sp list --display-name $SERVICE_PRINCIPAL_NAME --query "[].appId" --output tsv)
 
 # Output the service principal's credentials; use these in your services and
@@ -70,7 +76,6 @@ echo "Service principal ID: $USER_NAME"
 echo "Service principal password: $PASSWORD"
 ```
 
-PASSWORD=$(az ad sp create-for-rbac --name $SERVICE_PRINCIPAL_NAME --scopes $ACR_REGISTRY_ID --role acrpush --query "password" --output tsv)
 ### References
 + [Install Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-macos)
 + [AKS Github Actions](https://docs.microsoft.com/en-us/azure/aks/kubernetes-action?tabs=userlevel)

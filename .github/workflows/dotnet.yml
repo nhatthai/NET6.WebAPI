@@ -7,10 +7,10 @@ on:
     branches: [ "main" ]
 
 env:
-  REGISTRY_NAME: learndeployments
-  CLUSTER_RESOURCE_GROUP: LearnGithubAction
-  APP_NAME: dotnet6web
-  CLUSTER_NAME: 'learngithub'
+  REGISTRY_NAME: learndeploymentgithub
+  CLUSTER_RESOURCE_GROUP: LearningDeployment
+  APP_NAME: net6web
+  CLUSTER_NAME: 'AKSLearningGithubActions'
   NAMESPACE: learn-github
   SECRET: 'learnsecret'
 
