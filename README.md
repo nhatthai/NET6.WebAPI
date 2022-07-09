@@ -9,72 +9,71 @@
 
 ### Usage
 + Using docker-compose
-```
-docker-compose up
-```
+    ```
+    docker-compose up
+    ```
 
 + Azure Login
-```
-az login
-```
+    ```
+    az login
+    ```
 
 + Create group in Azure
-```
-az group create --name LearningDeployment --location SoutheastAsia
-```
+    ```
+    az group create --name LearningDeployment --location SoutheastAsia
+    ```
 
 + Create AKS Cluster
-```
-az aks create --resource-group LearningDeployment --name AKSLearningGithubActions --node-count 2 --generate-ssh-keys
-
-```
+    ```
+    az aks create --resource-group LearningDeployment --name AKSLearningGithubActions --node-count 2 --generate-ssh-keys
+    ```
 
 + Create ACR
-```
-az acr create --resource-group LearningDeployment --name learndeploymentgithub --sku Basic
-```
+    ```
+    az acr create --resource-group LearningDeployment --name learndeploymentgithub --sku Basic
+    ```
 
-Required: docker start on your machine
-```
-az acr login --name learndeploymentgithub
-```
++ Login ACR(Required: docker start on your machine)
+    ```
+    az acr login --name learndeploymentgithub
+    ```
 
-```
-az ad sp create-for-rbac --name "net6web" --role contributor --scopes /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP> --sdk-auth
++ Create AZURE_CREDENTIALS
+    ```
+    az ad sp create-for-rbac --name "net6web" --role contributor --scopes /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP> --sdk-auth
+    ```
+    Copy and paste into secret AZURE_CREDENTTIAL in the github repository 
 
-```
-Copy and paste into secret AZURE_CREDENTTIAL in the github repository 
 
++ [Create container registry Credentials](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-service-principal)
+    ```
+    #!/bin/bash
+    # This script requires Azure CLI version 2.25.0 or later. Check version with `az --version`.
 
-+ [Create container registry](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-service-principal)
-```
-#!/bin/bash
-# This script requires Azure CLI version 2.25.0 or later. Check version with `az --version`.
+    # Modify for your environment.
+    # ACR_NAME: The name of your Azure Container Registry
+    # SERVICE_PRINCIPAL_NAME: Must be unique within your AD tenant
+    ACR_NAME=learndeploymentgithub
+    SERVICE_PRINCIPAL_NAME=PrincipalLearnDeploymentGithubActions
 
-# Modify for your environment.
-# ACR_NAME: The name of your Azure Container Registry
-# SERVICE_PRINCIPAL_NAME: Must be unique within your AD tenant
-ACR_NAME=learndeploymentgithub
-SERVICE_PRINCIPAL_NAME=PrincipalLearnDeploymentGithubActions
+    # Obtain the full registry ID
+    ACR_REGISTRY_ID=$(az acr show --name $ACR_NAME --query "id" --output tsv)
+    # echo $registryId
 
-# Obtain the full registry ID
-ACR_REGISTRY_ID=$(az acr show --name $ACR_NAME --query "id" --output tsv)
-# echo $registryId
+    # Create the service principal with rights scoped to the registry.
+    # Default permissions are for docker pull access. Modify the '--role'
+    # argument value as desired:
+    # acrpull:     pull only
+    # acrpush:     push and pull
+    # owner:       push, pull, and assign roles
+    PASSWORD=$(az ad sp create-for-rbac --name $SERVICE_PRINCIPAL_NAME --scopes $ACR_REGISTRY_ID --role acrpush --query "password" --output tsv)
+    USER_NAME=$(az ad sp list --display-name $SERVICE_PRINCIPAL_NAME --query "[].appId" --output tsv)
 
-# Create the service principal with rights scoped to the registry.
-# Default permissions are for docker pull access. Modify the '--role'
-# argument value as desired:
-# acrpull:     pull only
-# acrpush:     push and pull
-# owner:       push, pull, and assign roles
-PASSWORD=$(az ad sp create-for-rbac --name $SERVICE_PRINCIPAL_NAME --scopes $ACR_REGISTRY_ID --role acrpush --query "password" --output tsv)
-USER_NAME=$(az ad sp list --display-name $SERVICE_PRINCIPAL_NAME --query "[].appId" --output tsv)
-
-# Output the service principal's credentials; use these in your services and
-# applications to authenticate to the container registry.
-echo "Service principal ID: $USER_NAME"
-echo "Service principal password: $PASSWORD"
-```
+    # Output the service principal's credentials; use these in your services and
+    # applications to authenticate to the container registry.
+    echo "Service principal ID: $USER_NAME"
+    echo "Service principal password: $PASSWORD"
+    ```
 
 ### References
 + [Install Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-macos)
