@@ -82,6 +82,6 @@ jobs:
         imagepullsecrets: |
           ${{ env.SECRET }}
         namespace: ${{ env.NAMESPACE }}
-       env:
+      env:
         IMAGE_TAG: ${{ github.sha }}
 
