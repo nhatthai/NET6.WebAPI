@@ -20,12 +20,17 @@
 
 + Create group in Azure
     ```
-    az group create --name LearningDeployment --location SoutheastAsia
+    az group create --name LearningDeployment --location KoreaCentral
     ```
 
 + Create AKS Cluster
     ```
     az aks create --resource-group LearningDeployment --name AKSLearningGithubActions --node-count 2 --generate-ssh-keys
+    ```
+
++ Get Credentials for kubectl
+    ```
+    az aks get-credentials -n AKSLearningGithubActions -g LearningDeployment
     ```
 
 + Create ACR
@@ -73,6 +78,58 @@
     # applications to authenticate to the container registry.
     echo "Service principal ID: $USER_NAME"
     echo "Service principal password: $PASSWORD"
+    ```
+
++ Run Github Action deploy_aks
+
++ Create Static IP
+    ```
+    az aks show --resource-group LearningDeployment --name AKSLearningGithubActions --query nodeResourceGroup -o tsv
+    ``` 
+    --> MC_LearningDeployment_AKSLearningGithubActions_koreacentral
+
+
+    ```
+    az network public-ip create --resource-group MC_LearningDeployment_AKSLearningGithubActions_koreacentral --name AKSLearningGithubActions --sku Standard --allocation-method static --query publicIp.ipAddress -o tsv
+    ```
+    --> 20.249.96.38(IP Address)
+
++ Create namespace for ingress 
+    ```
+    kubectl create namespace ingress-basic
+    ```
+
++ Add ingress-nginx repo from helm command
+    ```
+    helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+    helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+    helm repo update
+    ```
+
++ Set Ingress with IP
+    ```
+    helm install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-basic --set controller.replicaCount=2 --set controller.nodeSelector."beta\.kubernetes\.io/os"=linux --set defaultBackend.nodeSelector."beta\.kubernetes\.io/os"=linux --set controller.service.externalTrafficPolicy=Local --set controller.service.loadBalancerIP="20.249.96.38"
+    ```
+
++ Check service
+    ```
+    kubectl get service -l app.kubernetes.io/name=ingress-nginx --namespace ingress-basic
+    ```
+    Results:
+    ```
+    ingress-nginx-controller             LoadBalancer   10.0.42.164   20.249.96.38   80:31350/TCP,443:30212/TCP   68s
+    ingress-nginx-controller-admission   ClusterIP      10.0.69.59    <none>         443/TCP                      68s   
+    ```
+
++ Get external IP
+    ```
+    kubectl get all -n ingress-basic
+    ```
+    --> Go to browser and enter IP(http://20.249.96.38/). It should be showed nginx(404 NOT FOUND)
+
++ Check the Web APP
+    ```
+    http://20.249.96.38/webapi
     ```
 
 ### References
