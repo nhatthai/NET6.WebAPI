@@ -75,8 +75,8 @@ jobs:
     - uses: azure/k8s-deploy@v1
       with:
         manifests: |
-          ${{ github.workspace }}/manifests/webapi.yaml
-          ${{ github.workspace }}/manifests/ingress-aks.yaml
+          ${{ github.workspace }}/k8s/webapi.yaml
+          ${{ github.workspace }}/k8s/ingress-aks.yaml
         images: |
           ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
         imagepullsecrets: |

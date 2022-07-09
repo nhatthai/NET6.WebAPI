@@ -5,6 +5,7 @@
 + Install Docker & DockerCompose
 + Minikube or Kubernetes cluster (see below if needed)
 + Install azure cli
++ Install Kubectl
 
 ### Usage
 + Using docker-compose
@@ -69,7 +70,9 @@ echo "Service principal ID: $USER_NAME"
 echo "Service principal password: $PASSWORD"
 ```
 
+PASSWORD=$(az ad sp create-for-rbac --name $SERVICE_PRINCIPAL_NAME --scopes $ACR_REGISTRY_ID --role acrpush --query "password" --output tsv)
 ### References
 + [Install Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-macos)
 + [AKS Github Actions](https://docs.microsoft.com/en-us/azure/aks/kubernetes-action?tabs=userlevel)
 + [KubeLab Github Actions](https://azure.github.io/kube-labs/1-github-actions.html#_1-create-a-deployment-pipeline)
++ [AKS deployment with github actions](https://docs.microsoft.com/en-us/learn/modules/aks-deployment-pipeline-github-actions/)
