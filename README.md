@@ -8,11 +8,8 @@
 + Install Kubectl
 
 ### Usage
-+ Using docker-compose
-    ```
-    docker-compose up
-    ```
-
+#### Setup Azure
+-----------------
 + Azure Login
     ```
     az login
@@ -82,6 +79,8 @@
 
 + Run Github Action deploy_aks
 
+### Create Ingress and expose IP
+---------------------------------
 + Create Static IP
     ```
     az aks show --resource-group LearningDeployment --name AKSLearningGithubActions --query nodeResourceGroup -o tsv
@@ -106,7 +105,7 @@
     helm repo update
     ```
 
-+ Set Ingress with IP
++ Set Ingress with IP(expose IP)
     ```
     helm install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-basic --set controller.replicaCount=2 --set controller.nodeSelector."beta\.kubernetes\.io/os"=linux --set defaultBackend.nodeSelector."beta\.kubernetes\.io/os"=linux --set controller.service.externalTrafficPolicy=Local --set controller.service.loadBalancerIP="20.249.96.38"
     ```
@@ -131,6 +130,10 @@
     ```
     http://20.249.96.38/webapi
     ```
+
+### Result
++ ![Azure Kubernetes Sevice](./images/AKS.png)
++ ![Web site](./images/Web.png)
 
 ### References
 + [Install Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-macos)
