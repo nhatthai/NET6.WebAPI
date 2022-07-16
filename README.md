@@ -1,15 +1,17 @@
 # NET6.WebAPI
 .NET6 WebAPI sample using Github Actions for deployments to Azure Kubernetes Service
 
-### Github Runner Requirements 
+### Github Runner Requirements
+------------------------------
 + Install Docker & DockerCompose
 + Minikube or Kubernetes cluster (see below if needed)
 + Install azure cli
 + Install Kubectl
 
-### Usage
-#### Setup Azure
------------------
+## Usage
+---------
+### Setup Azure
+----------------
 + Azure Login
     ```
     az login
@@ -132,10 +134,11 @@
     ```
 
 ### Result
-+ ![Azure Kubernetes Sevice](./images/AKS.png)
-+ ![Web site](./images/Web.png)
+![Azure Kubernetes Sevice](./images/AKS.png)
+![Web site](./images/Web.png)
 
 ### References
+---------------
 + [Install Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-macos)
 + [AKS Github Actions](https://docs.microsoft.com/en-us/azure/aks/kubernetes-action?tabs=userlevel)
 + [KubeLab Github Actions](https://azure.github.io/kube-labs/1-github-actions.html#_1-create-a-deployment-pipeline)
