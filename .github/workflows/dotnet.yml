@@ -71,6 +71,11 @@ jobs:
         namespace: ${{ env.NAMESPACE }}
         arguments: --force true
 
+    # Copy k8s folder to workspace
+    - name: copy release management scripts
+      run: Copy 'k8s/' '${{ github.workspace }}/k8s'
+      shell: powershell
+
     # Deploy app to AKS
     - uses: azure/k8s-deploy@v1
       with:
@@ -84,4 +89,3 @@ jobs:
         namespace: ${{ env.NAMESPACE }}
       env:
         IMAGE_TAG: ${{ github.sha }}
-
