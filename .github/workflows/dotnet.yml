@@ -47,7 +47,7 @@ jobs:
 
   deploy_aks:
     needs: build
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
     # Set the target Azure Kubernetes Service (AKS) cluster.
