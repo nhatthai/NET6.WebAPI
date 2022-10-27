@@ -7,6 +7,9 @@
 *.userosscache
 *.sln.docstates
 
+.terraform/*
+.terraform*
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -115,7 +118,7 @@ ipch/
 *.VC.db
 *.VC.VC.opendb
 
-.vs 
+.vs
 
 # Visual Studio profiler
 *.psess

@@ -46,7 +46,7 @@
     ```
     az ad sp create-for-rbac --name "net6web" --role contributor --scopes /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP> --sdk-auth
     ```
-    Copy and paste into secret AZURE_CREDENTTIAL in the github repository 
+    Copy and paste into secret AZURE_CREDENTTIAL in the github repository
 
 
 + [Create container registry Credentials](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-service-principal)
@@ -81,12 +81,37 @@
 
 + Run Github Action deploy_aks
 
+### Using Terraform in AKZ
+---------------------------
++ Azure Login
+    ```
+    az login
+    ```
+
++ Set up the privileges for accessing the Azure resources required for using Terraform
+    ```
+    az ad sp create-for-rbac --name "net6web" --role contributor --scopes /subscriptions/<SUBSCRIPTION_ID>
+    ```
+    Copy and paste appId and password into terraform.tfvar
+    Copy paste REGISTRY_USERNAME&REGISTRY_PASSWORD of github secret
+
++ Create AZURE_CREDENTIALS
+    ```
+    az ad sp create-for-rbac --name "net6web" --role contributor --scopes /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP> --sdk-auth
+    ```
+    Copy and paste into secret AZURE_CREDENTTIAL in the github repository
+
++ Get Credentials for kubectl
+    ```
+    az aks get-credentials -n AKSLearningGithubActions -g LearningDeployment
+    ```
+
 ### Create Ingress and expose IP
 ---------------------------------
 + Create Static IP
     ```
     az aks show --resource-group LearningDeployment --name AKSLearningGithubActions --query nodeResourceGroup -o tsv
-    ``` 
+    ```
     --> MC_LearningDeployment_AKSLearningGithubActions_koreacentral
 
 
@@ -95,7 +120,7 @@
     ```
     --> 20.249.96.38(IP Address)
 
-+ Create namespace for ingress 
++ Create namespace for ingress
     ```
     kubectl create namespace ingress-basic
     ```
@@ -119,7 +144,7 @@
     Results:
     ```
     ingress-nginx-controller             LoadBalancer   10.0.42.164   20.249.96.38   80:31350/TCP,443:30212/TCP   68s
-    ingress-nginx-controller-admission   ClusterIP      10.0.69.59    <none>         443/TCP                      68s   
+    ingress-nginx-controller-admission   ClusterIP      10.0.69.59    <none>         443/TCP                      68s
     ```
 
 + Get external IP
